@@ -5,6 +5,10 @@ int main(int argc, char **argv){
   FILE *fp;
   char buffer[1024];
 
+  char algo;
+  char opera;
+  int num_pro;
+
   struct json_object *parsed_json;
   struct json_object *algoritmo;
   struct json_object *operacion;
@@ -45,17 +49,18 @@ int main(int argc, char **argv){
     trabajo_array[i] = json_object_get_int(can_tr);
   }
 
+  algo = json_object_get_string(algoritmo);
+  opera = json_object_get_string(operacion);
+  num_pro = json_object_get_int(num_procesos);
 
-  printf("Algoritmo a utilizar: %s\n", json_object_get_string(algoritmo));
-  printf("Operacion: %s\n", json_object_get_string(operacion));
-  printf("Numero de Procesos: %d\n", json_object_get_int(num_procesos));
+  //printf("Algoritmo a utilizar: %s\n", json_object_get_string(algoritmo));
+  //printf("Operacion: %s\n", json_object_get_string(operacion));
+  //printf("Numero de Procesos: %d\n", json_object_get_int(num_procesos));
 
-
-
-  for(j=0;j<json_object_get_int(num_procesos);j++){
-    printf("Element[%d] = %d\n",j,tiempo_array[j] );
-  }
-  for(j=0;j<json_object_get_int(num_procesos);j++){
-    printf("Element[%d] = %d\n",j,trabajo_array[j] );
-  }
+  //for(j=0;j<json_object_get_int(num_procesos);j++){
+    //printf("Element[%d] = %d\n",j,tiempo_array[j] );
+  //}
+  //for(j=0;j<json_object_get_int(num_procesos);j++){
+    //printf("Element[%d] = %d\n",j,trabajo_array[j] );
+  //}
 }
