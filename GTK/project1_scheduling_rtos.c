@@ -1,8 +1,3 @@
-/*
- * Compile with:
- *  gcc -o helloworld helloworld.c `pkg-config --cflags --libs gtk+-2.0`
- *
- */
 
 #include <gtk/gtk.h>
 #include <math.h>
