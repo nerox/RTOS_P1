@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define PROCESSES_AVAILABLE 5
+
 #define work_unit_size 50
 #define STACK_SIZE 400096
 typedef struct{
@@ -18,16 +18,17 @@ typedef struct{
 }my_pthreadpcb;
 
 my_pthreadpcb *process_list;
-int Work_by_Process[PROCESSES_AVAILABLE];
-int Arrival_Time_by_Process[PROCESSES_AVAILABLE];
-int Process_State[PROCESSES_AVAILABLE];
-int Tickets_by_Process[PROCESSES_AVAILABLE];
+int PROCESSES_AVAILABLE;
+int *Work_by_Process;
+int *Arrival_Time_by_Process;
+int *Process_State;
+int *Tickets_by_Process;
+int *sorted_Work_by_Process;
+int *sorted_Arrival_Time_by_Process;
 int availableTreads;
 int curThread;
 int curSortedPos;
-int sorted_Work_by_Process[PROCESSES_AVAILABLE];
-int sorted_Arrival_Time_by_Process[PROCESSES_AVAILABLE];
-sigjmp_buf mark[PROCESSES_AVAILABLE];
+
 int priorityqueue_pos;
 int Quantum;
 /*

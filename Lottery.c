@@ -26,19 +26,18 @@ int select_random_thread(){
 	int randomPos;
 	int retpos=0;
 	int i;
- 	srand(time(0));
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 		}
 	}
-	randomPos=rand() % (totalTicketsAvailable + 1);
+	randomPos=rand() % (totalTicketsAvailable);
 	totalTicketsAvailable=0;
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 			if(randomPos/(totalTicketsAvailable)<=0){
-				//printf("Return pos %d\n ", i); 
+				printf("Return pos %d\n ", i); 
 				return retpos=i;
 			}
 		}
@@ -100,7 +99,7 @@ void alarm_wakeup ()
 
 void Lottery_Scheduler()
 {
-
+ 	srand(time(0));
         address_t pc = (address_t)Lottery_Scheduler_Execution;
 	while(1){
 		deployer(pc);
