@@ -20,37 +20,18 @@ static void
 print_hello (GtkWidget *widget,
              gpointer   user_data)
 {
-  g_print ("Hello World\n");
   GtkListStore *store = (GtkListStore*) user_data;
   GtkTreeIter iter;
-  gtk_tree_model_get_iter_first (GTK_TREE_MODEL (&user_data), &iter);
+  gtk_tree_model_get_iter_first (GTK_TREE_MODEL (user_data), &iter);
   gtk_list_store_set (store, &iter,
               COL_PROGRESS, 50.0,
+              COL_PROCESS_ACTIVE, "Active",
+              COL_PI_VALUE, 3.145926,
               -1);
 }
 
 void update_model (gchar process_id, gdouble PI_value, gfloat progress, GtkTreeModel *ListModel)
 {
-  GtkTreeIter iter;
-  // GtkTreePath *path;
-  // GtkListStore  *store;
-
-  // path = gtk_tree_path_new_from_string ("1");
-  // store = gtk_list_store_new (NUM_COLS, G_TYPE_UINT, G_TYPE_FLOAT, G_TYPE_STRING,G_TYPE_DOUBLE);
-  // gtk_tree_model_get_iter (ListModel,
-                           // &iter,
-                           // path);
-
-
-  //gtk_tree_path_free (path);
-  printf("hola1\n");
-  gtk_tree_store_append (GTK_TREE_STORE (ListModel), &iter, NULL);
-  printf("hola2\n" );
-  gtk_tree_store_set (GTK_TREE_STORE(ListModel), &iter,
-                      COL_PROGRESS, 50.0,
-                      COL_PROCESS_ACTIVE, "Active",
-                      COL_PI_VALUE, 3.15,
-                      -1);
 }
 
 
@@ -62,7 +43,6 @@ double arcsin(unsigned int terminos, GtkTreeModel *ListModel) {
       ans += (4*pow(-1,i))/(2*i+1);
       percentage = 100*((double)i/(double)terminos);
       printf("i = %d, porcentaje: %lf, PI = %lf\n",i, percentage, ans );
-      update_model ((gchar)i, 3.16, percentage, ListModel);
     }
     return ans;
 }
@@ -184,7 +164,7 @@ main (int argc, char **argv)
     view = create_view_and_model (num_process);
 
     gtk_scrolled_window_set_min_content_height (GTK_SCROLLED_WINDOW (scrolled_window),300);
-    gtk_scrolled_window_set_min_content_width (GTK_SCROLLED_WINDOW (scrolled_window),310);
+    gtk_scrolled_window_set_min_content_width (GTK_SCROLLED_WINDOW (scrolled_window),350);
 
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                   GTK_POLICY_AUTOMATIC,
@@ -200,10 +180,16 @@ main (int argc, char **argv)
 
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
 
+
+  GtkTreeModel *ListModel;
+  //GtkListStore *store;
+
+  ListModel = gtk_tree_view_get_model (GTK_TREE_VIEW(view));
+
   okBtn = gtk_button_new_with_label("Start");
   gtk_widget_set_size_request(okBtn, 70, 30);
   gtk_container_add(GTK_CONTAINER(hbox), okBtn);
-  g_signal_connect (okBtn, "clicked", G_CALLBACK (print_hello), NULL);
+  g_signal_connect (okBtn, "clicked", G_CALLBACK (print_hello), ListModel);
   clsBtn = gtk_button_new_with_label("Exit");
   g_signal_connect_swapped (clsBtn, "clicked", G_CALLBACK (gtk_widget_destroy), window);
   gtk_container_add(GTK_CONTAINER(hbox), clsBtn);
@@ -237,10 +223,7 @@ main (int argc, char **argv)
 // g_object_unref (app);
 //
 // -----------------------------------------------------------------------
-GtkTreeModel *ListModel;
-//GtkListStore *store;
 
-ListModel = gtk_tree_view_get_model (GTK_TREE_VIEW(view));
 
 
 unsigned int n = 100;
