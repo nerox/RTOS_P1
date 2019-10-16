@@ -1,16 +1,16 @@
 #include "Deployer.h"
 #include "Controller.h"
 void start_clock(){
-	begin = clock();
+	time(&start_t);
 }
 void deployer(address_t func){
-	clock_t end;
+
 	double time_spent;
 
 
 	/* here, do your time-consuming job */
-	end = clock();
-	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+   	time(&end_t);
+	time_spent = difftime(end_t, start_t);
 	deploy_verifier(time_spent,func);
 }
 void deploy_verifier(double time_spent,address_t func){

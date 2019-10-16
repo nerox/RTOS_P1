@@ -31,12 +31,12 @@ int select_random_thread(){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 		}
 	}
-	randomPos=rand() % (totalTicketsAvailable);
+	randomPos=rand() % (totalTicketsAvailable+1);
 	totalTicketsAvailable=0;
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
-			if(randomPos/(totalTicketsAvailable)<=0){
+			if(randomPos<=totalTicketsAvailable){
 				printf("Return pos %d\n ", i); 
 				return retpos=i;
 			}
@@ -59,7 +59,7 @@ void Lottery_Scheduler_aux()
 	}
 		printf(" \n");*/
 	if(verify_pending_process()!=1){
-       		printf("All threads have been completed %d\n "); 
+       		printf("All threads have been completed\n "); 
 		exit(1);
 	}
 	// TODO: we will handle scheduling threads here.
@@ -68,10 +68,10 @@ void Lottery_Scheduler_aux()
 	while(process_list[curThread].status!=1){
 		deployer(pc);
 		curThread= select_random_thread();
-       		//printf("All threads available threads have been completed %d\n ",curThread); 		
+       		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
 	}
 	curThread= select_random_thread();
-        //printf("Random pos %d\n ", curThread); 
+        printf("Random pos %d\n ", curThread); 
    	setalarm();
 	siglongjmp(process_list[curThread].env,1);
 }

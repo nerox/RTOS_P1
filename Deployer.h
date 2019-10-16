@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-clock_t begin;
+time_t start_t, end_t;
 int Alarm_Signaling ();
 void timer_handler (int signum);
 void deployer(address_t func);
