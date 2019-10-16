@@ -2,6 +2,9 @@
 #include "Scheduler.h"
 #include "Deployer.h"
 #include "Lottery.h"
+#include "Lectura_json.h"
+#include "Round_Robin.h"
+#include "Quick_Sort.h"
 int verify_pending_process(){
 	int i;
 	for(i=0;i<PROCESSES_AVAILABLE;i++){
@@ -16,21 +19,21 @@ void start_Structures(){
 	parse_Data_From_File();
 	availableTreads=0;
 	priorityqueue_pos=0;
-	/*printf("Arrival %d\n",Arrival_Time_by_Process[0]);
-	printf("Work %d\n",Work_by_Process[0]);
-	printf("Tiquets %d\n",Tickets_by_Process[0]);
+	/*//printf("Arrival %d\n",Arrival_Time_by_Process[0]);
+	//printf("Work %d\n",Work_by_Process[0]);
+	/printf("Tiquets %d\n",Tickets_by_Process[0]);
 	printf("Arrival %d\n",Arrival_Time_by_Process[1]);
 	printf("Work %d\n",Work_by_Process[1]);
-	printf("Tiquets %d\n",Tickets_by_Process[1]);
+	//printf("Tiquets %d\n",Tickets_by_Process[1]);
 	printf("Arrival %d\n",Arrival_Time_by_Process[2]);
 	printf("Work %d\n",Work_by_Process[2]);
-	printf("Tiquets %d\n",Tickets_by_Process[2]);
+	//printf("Tiquets %d\n",Tickets_by_Process[2]);
 	printf("Arrival %d\n",Arrival_Time_by_Process[3]);
 	printf("Work %d\n",Work_by_Process[3]);
-	printf("Tiquets %d\n",Tickets_by_Process[3]);
+	//printf("Tiquets %d\n",Tickets_by_Process[3]);
 	printf("Arrival %d\n",Arrival_Time_by_Process[4]);
 	printf("Work %d\n",Work_by_Process[4]);
-	printf("Tiquets %d\n",Tickets_by_Process[4]);
+	//printf("Tiquets %d\n",Tickets_by_Process[4]);
 	printf("Process %d\n",PROCESSES_AVAILABLE);
 	printf("Qunatum %d\n",Quantum);*/
 	sorted_Work_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
@@ -46,10 +49,24 @@ int main()
 	start_Structures();
 	start_clock();
 	sort(Arrival_Time_by_Process,sorted_Arrival_Time_by_Process,PROCESSES_AVAILABLE);
-	//FCFS_Scheduler();
-	//SJF_Scheduler();
-	//Lottery_Scheduler();
-	Round_Robin();
+	switch (algorithm)
+	{
+	case 0: // code to be executed if n = 0;
+		printf("LS\n");
+		Lottery_Scheduler();
+		break;
+	case 1: // code to be executed if n = 1;
+		printf("FCFS\n");
+		FCFS_Scheduler();
+		break;
+	case 2: // code to be executed if n = 2;
+		printf("RR\n");
+		Round_Robin();
+		break;
+	default: // code to be executed if n doesn't match any cases
+		printf("Unknow option selected please use RR,LS or FCFS as inputs");
+		break;
+	}
 }
 void FCFS_Scheduler(){
 	printf("Started FCFS selection, this algorithm will execute linearly the processes\n");

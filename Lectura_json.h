@@ -2,11 +2,11 @@
 #define PARSER_H
 #include <stdio.h>
 #include <json-c/json.h>
-
+#include <string.h>
 FILE *fp;
 char buffer[1024];
 
-char algo;
+char *algo;
 char opera;
 
 struct json_object *parsed_json;
@@ -17,6 +17,7 @@ struct json_object *quantum_json;
 struct json_object *tiempo_llegada;
 struct json_object *cantidad_trabajo;
 struct json_object *tiquetes;
+struct json_object *tiq;
 struct json_object *t_ll; //var temp para guardar cada var del array de tiempo de llegada
 struct json_object *can_tr; //var temp para guardar cada var del array de cantidad_trabajo
 struct json_object *tiquets_temp; //var temp para guardar cada var del array de tiquetes

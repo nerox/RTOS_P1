@@ -16,7 +16,7 @@ typedef struct{
    char stack[STACK_SIZE];
 
 }my_pthreadpcb;
-
+int algorithm;
 my_pthreadpcb *process_list;
 int PROCESSES_AVAILABLE;
 int *Work_by_Process;
