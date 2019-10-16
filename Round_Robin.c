@@ -1,6 +1,6 @@
-#include "Lottery.h"
+#include "Round_Robin.h"
 
-void Lottery_Scheduler_Execution()
+void Round_Robin_Execution()
 {
 	unsigned int n = work_unit_size*Work_by_Process[curThread];
 	long double result = 0;
@@ -21,31 +21,25 @@ void Lottery_Scheduler_Execution()
 
 	
 }
-int select_random_thread(){
-	int totalTicketsAvailable=0;
-	int randomPos;
-	int retpos=0;
-	int i;
-	for (i=0;i<PROCESSES_AVAILABLE;i++){
-		if(process_list[i].status==1){
-			totalTicketsAvailable+=Tickets_by_Process[i];
-		}
-	}
-	randomPos=rand() % (totalTicketsAvailable+1);
-	totalTicketsAvailable=0;
-	for (i=0;i<PROCESSES_AVAILABLE;i++){
-		if(process_list[i].status==1){
-			totalTicketsAvailable+=Tickets_by_Process[i];
-			if(randomPos<=totalTicketsAvailable){
-				printf("Return pos %d\n ", i); 
-				return retpos=i;
-			}
-		}
-	}
-	return retpos;
-}
 
-void Lottery_Scheduler_aux()
+void select_thread_Round_Robin(){
+	if (curThread+1<PROCESSES_AVAILABLE){
+		selectThread(curThread+1);
+	}
+	else {
+		selectThread(0);//Returns to the first position
+	}
+}
+void selectThread(int position){
+	int i;
+	for (i=position;i<PROCESSES_AVAILABLE;i++){
+		if (process_list[i].status==1){
+			curThread=i;
+			break;
+		}
+	}
+}
+void Round_Robin_aux()
 {
 
 	int ret_val = sigsetjmp(process_list[curThread].env,1);
@@ -63,53 +57,54 @@ void Lottery_Scheduler_aux()
 		exit(1);
 	}
 	// TODO: we will handle scheduling threads here.
-        address_t pc = (address_t)Lottery_Scheduler_Execution;
+        address_t pc = (address_t)Round_Robin_Execution;
 	deployer(pc);		
 	while(process_list[curThread].status!=1){
 		deployer(pc);
-		curThread= select_random_thread();
+		select_thread_Round_Robin();
        		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
 	}
-	curThread= select_random_thread();
-        //printf("Random pos %d\n ", curThread); 
-   	setalarm();
+	select_thread_Round_Robin();
+        printf("Random pos %d\n ", curThread); 
+   	setalarm_Round_Robin();
 	siglongjmp(process_list[curThread].env,1);
 }
-void my_thread_init(){
+void my_thread_init_Round_Robin(){
 
   
 	tout_val.it_interval.tv_sec = 0;
 	tout_val.it_interval.tv_usec = 0;
 	tout_val.it_value.tv_sec = 0; /* set timer for "INTERVAL (10) seconds */
 	tout_val.it_value.tv_usec = Quantum;
-	setalarm();
+	setalarm_Round_Robin();
 }
 
-void setalarm(){
+void setalarm_Round_Robin(){
     setitimer(ITIMER_REAL, &tout_val,0);
-    signal(SIGALRM,alarm_wakeup); /* set the Alarm signal capture */
+    signal(SIGALRM,alarm_wakeup_Round_Robin); /* set the Alarm signal capture */
 }
 
-void alarm_wakeup ()
+void alarm_wakeup_Round_Robin ()
 {
-	Lottery_Scheduler_aux();
+	Round_Robin_aux();
 }
 
 
 
-void Lottery_Scheduler()
+void Round_Robin()
 {
  	srand(time(0));
-        address_t pc = (address_t)Lottery_Scheduler_Execution;
+        address_t pc = (address_t)Round_Robin_Execution;
 	while(1){
 		deployer(pc);
-		curThread=select_random_thread();
+		select_thread_Round_Robin();
 		if(process_list[curThread].status==1){		
-			my_thread_init();
+			my_thread_init_Round_Robin();
 			siglongjmp(process_list[curThread].env,1);
 		}
 	}
 
 }
+
 
 

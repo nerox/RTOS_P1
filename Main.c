@@ -48,7 +48,8 @@ int main()
 	sort(Arrival_Time_by_Process,sorted_Arrival_Time_by_Process,PROCESSES_AVAILABLE);
 	//FCFS_Scheduler();
 	//SJF_Scheduler();
-	Lottery_Scheduler();
+	//Lottery_Scheduler();
+	Round_Robin();
 }
 void FCFS_Scheduler(){
 	printf("Started FCFS selection, this algorithm will execute linearly the processes\n");
