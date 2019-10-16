@@ -2,7 +2,9 @@
   "algoritmo": "Lottery_Scheduling",
   "operacion": "Expropiativo",
   "num_procesos": "5",
-  "tiempo_llegada": ["100","5","25","35","85"],
-  "cantidad_trabajo":["5","25","15","10","20"]
+  "quantum": "100000",
+  "tiempo_llegada": ["0","0","0","0","0"],
+  "cantidad_trabajo":["5000000","2050000","10000000","20500000","20500000"],
+  "tiquetes":["1","25","15","100","20"]
 
 }

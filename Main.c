@@ -1,46 +1,76 @@
-#define _POSIX_SOURCE
-#include <stdio.h>
-#include <setjmp.h>
-#include <stdlib.h>
-#include <math.h>
-#define PROCESSES_AVAILABLE 5
-#define work_unit_size 50
-int Work_by_Process[5]={25,10,5,15,20};
-int curThread;
-int curSortedPos;
-int sorted_copy[PROCESSES_AVAILABLE];
-/*
-The previous definitions need to be configured by process so that each process has different amout of work
-The previous need to be defined by text file
-The prvious need to be set dinamically to N process
-*/
-sigjmp_buf mark[PROCESSES_AVAILABLE];
-void FCFS_Scheduler_Execution();
-void FCFS_Scheduler_Selection();
-void FCFS_Scheduler_aux();
-void FCFS_Scheduler();
-void SJF_Scheduler_Execution();
-void SJF_Scheduler_Selection();
-void SJF_Scheduler_aux();
-void SJF_Scheduler();
-//float Calculate_Pi();
-long double Calculate_Pi();
-void sort();
+#include "Controller.h"
+#include "Scheduler.h"
+#include "Deployer.h"
+#include "Lottery.h"
+int verify_pending_process(){
+	int i;
+	for(i=0;i<PROCESSES_AVAILABLE;i++){
+		if (process_list[i].status!=2){
+			return 1;
+		}
+	}
+	return 0;
+}
+void start_Structures(){
+
+	parse_Data_From_File();
+	availableTreads=0;
+	priorityqueue_pos=0;
+	/*printf("Arrival %d\n",Arrival_Time_by_Process[0]);
+	printf("Work %d\n",Work_by_Process[0]);
+	printf("Tiquets %d\n",Tickets_by_Process[0]);
+	printf("Arrival %d\n",Arrival_Time_by_Process[1]);
+	printf("Work %d\n",Work_by_Process[1]);
+	printf("Tiquets %d\n",Tickets_by_Process[1]);
+	printf("Arrival %d\n",Arrival_Time_by_Process[2]);
+	printf("Work %d\n",Work_by_Process[2]);
+	printf("Tiquets %d\n",Tickets_by_Process[2]);
+	printf("Arrival %d\n",Arrival_Time_by_Process[3]);
+	printf("Work %d\n",Work_by_Process[3]);
+	printf("Tiquets %d\n",Tickets_by_Process[3]);
+	printf("Arrival %d\n",Arrival_Time_by_Process[4]);
+	printf("Work %d\n",Work_by_Process[4]);
+	printf("Tiquets %d\n",Tickets_by_Process[4]);
+	printf("Process %d\n",PROCESSES_AVAILABLE);
+	printf("Qunatum %d\n",Quantum);*/
+	sorted_Work_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
+	sorted_Arrival_Time_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
+       	process_list = malloc(PROCESSES_AVAILABLE * sizeof(my_pthreadpcb));
+	int i;
+	for (i=0;i++;i<PROCESSES_AVAILABLE){
+		process_list[i].status=0;
+	}
+}
 int main()
 {
-	FCFS_Scheduler();
-	SJF_Scheduler();
+	start_Structures();
+	start_clock();
+	sort(Arrival_Time_by_Process,sorted_Arrival_Time_by_Process,PROCESSES_AVAILABLE);
+	//FCFS_Scheduler();
+	//SJF_Scheduler();
+	//Lottery_Scheduler();
+	Round_Robin();
 }
 void FCFS_Scheduler(){
 	printf("Started FCFS selection, this algorithm will execute linearly the processes\n");
-	curThread=0; // FCFS always starts with the first job
-	while(curThread<PROCESSES_AVAILABLE){
-		FCFS_Scheduler_aux();
+        address_t pc = (address_t)FCFS_Scheduler_Execution;
+	while(verify_pending_process()){
+
+		deployer(pc);
+		curThread=searchposition(sorted_Arrival_Time_by_Process[priorityqueue_pos] ,Arrival_Time_by_Process,PROCESSES_AVAILABLE); // FCFS always starts with the first job
+		if(process_list[curThread].status==1){
+			FCFS_Scheduler_aux();
+		}
+		else if (process_list[curThread].status==2){
+			Arrival_Time_by_Process[curThread]--;
+		}
+		else{
+		}
 	}
 }
 void FCFS_Scheduler_aux(){
 
-	if (sigsetjmp(mark[curThread],1) != 0) {
+	if (sigsetjmp(process_list[curThread].env,1) != 0) {
 		FCFS_Scheduler_Selection();
 		return;
 	}
@@ -49,9 +79,7 @@ void FCFS_Scheduler_aux(){
 }
 void FCFS_Scheduler_Execution()
 {
-	//Calculate_Pi();
-
-	unsigned int n = 1000000000;
+	unsigned int n = work_unit_size*Work_by_Process[curThread];
 	long double result = 0;
 
 	result = Calculate_Pi(n);
@@ -59,7 +87,9 @@ void FCFS_Scheduler_Execution()
 	printf("terminos = %u, aproximacion = %Lf\n", n, result );
 
 	printf("Current Thread %d\n",curThread);
-	siglongjmp(mark[curThread], -1);
+	process_list[curThread].status=2;
+	printf("siglongjmp() has been called, a new thread is going to be selected\n");
+	siglongjmp(process_list[curThread].env, -1);
 }
 
 /*
@@ -67,18 +97,9 @@ FCFS doesn't require an specific algorithm selection
 */
 void FCFS_Scheduler_Selection()
 {
-	printf("siglongjmp() has been called, a new thread is going to be selected\n");
-	curThread++;
+	priorityqueue_pos++;
 }
 
-/*float Calculate_Pi(){
-
-	int i,j;
-	float result=1.0;
-	printf("Pi result is %f\n",2*result);
-	//Needs clarification since there are singificant issue if we want to calculate arcsin taylor series
-	return 2*result;
-}*/
 
 long double Calculate_Pi(unsigned int terminos) {
     long double ans = 4;
@@ -89,64 +110,19 @@ long double Calculate_Pi(unsigned int terminos) {
     return ans;
 }
 
-
-
-void SJF_Scheduler(){
-	curSortedPos=0;
-	printf("Started SJF selection, this algorithm will execute linearly the processes in order of which takes less to execute\n");
-	printf("Sorting the job sizes\n");
-	sort();
-	printf("Selecting next job\n");
-	while(curSortedPos<PROCESSES_AVAILABLE){
-		curThread=searchposition(sorted_copy[curSortedPos] ,Work_by_Process,PROCESSES_AVAILABLE);
-		SJF_Scheduler_aux();
-	}
-}
-void SJF_Scheduler_aux(){
-
-	if (sigsetjmp(mark[curThread],1) != 0) {
-		SJF_Scheduler_Selection();
-		return;
-	}
-	SJF_Scheduler_Execution();
-
-}
-void SJF_Scheduler_Execution()
-{
-	//Calculate_Pi();
-
-	unsigned int n = 1000000000;
-	long double result = 0;
-
-	result = Calculate_Pi(n);
-
-	printf("terminos = %u, aproximacion = %Lf\n", n, result );
-
-	printf("Current Thread %d\n",curThread);
-	siglongjmp(mark[curThread], -1);
-}
-
 /*
-SJF requires to take a look into the sorted list and decide which is the next process to execute
-*/
-void SJF_Scheduler_Selection()
-{
-	printf("siglongjmp() has been called, a new thread is going to be selected\n");
-	//scheduler moves to the next shortest job
-	curSortedPos++;
-}
-
-/*
-Call to srot algorithm
+Call to sort algorithm
 */
 
 // Driver program to test above functions
-void sort()
+void sort(int array[], int *sortedarray,int size)
 {
-	memcpy(sorted_copy, Work_by_Process, sizeof(sorted_copy));
-	int n = sizeof(sorted_copy)/sizeof(sorted_copy[0]);
-	quickSort(sorted_copy, 0, n-1);
+	memcpy(sortedarray, array, size*sizeof(int));
+	int n = size;
+	quickSort(sortedarray, 0, n-1);
 	printf("Sorted array: n");
-	printArray(sorted_copy, n);
-	printArray(Work_by_Process, n);
+	printArray(sortedarray, n);
+	printArray(array, n);
+
+
 }
