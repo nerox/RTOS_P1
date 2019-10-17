@@ -22,8 +22,9 @@ void Lottery_Scheduler_Execution()
     }
 	process_list[curThread].status=2;
     	update_progress_var.status = "Finished";//g_string_new (test);
+	Lottery_Scheduler_aux();
 	while (1) {
-		//printf("holis%d\n",curThread);
+
 	}
 
 	
@@ -31,7 +32,7 @@ void Lottery_Scheduler_Execution()
 int select_random_thread(){
 	int totalTicketsAvailable=0;
 	int randomPos;
-	int retpos=0;
+	int retpos=curThread;
 	int i;
     	update_progress_var.status = "Waiting";//g_string_new (test);
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
@@ -45,7 +46,7 @@ int select_random_thread(){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 			if(randomPos<=totalTicketsAvailable){
-				//printf("Return pos %d\n ", i); 
+				printf("Return pos %d\n ", i); 
 				return retpos=i;
 			}
 		}
@@ -72,11 +73,11 @@ void Lottery_Scheduler_aux()
 	// TODO: we will handle scheduling threads here.
         address_t pc = (address_t)Lottery_Scheduler_Execution;
 	deployer(pc);		
-	while(process_list[curThread].status!=1){
+	/*while(process_list[curThread].status!=1){
 		deployer(pc);
 		curThread= select_random_thread();
-       		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
-	}
+       		printf("A new thread was added and the current thread is %d\n ",curThread); 		
+	}*/
 	curThread= select_random_thread();
         //printf("Random pos %d\n ", curThread); 
    	//setalarm();

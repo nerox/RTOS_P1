@@ -86,7 +86,7 @@ main (int argc, char **argv)
 
 
   //update_progress_var.PI_value = result;
-  g_timeout_add (100, update_model, ListModel);
+  g_timeout_add (1, update_model, ListModel);
  // g_thread_new ("thread", (GThreadFunc) arcsin_thread, (gpointer)window);
   g_thread_new ("scheduler", (GThreadFunc) scheduler_thread, (gpointer)window);
 

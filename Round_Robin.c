@@ -69,11 +69,11 @@ void Round_Robin_aux()
 	// TODO: we will handle scheduling threads here.
         address_t pc = (address_t)Round_Robin_Execution;
 	deployer(pc);		
-	while(process_list[curThread].status!=1){
+	/*while(process_list[curThread].status!=1){
 		deployer(pc);
 		select_thread_Round_Robin();
        		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
-	}
+	}*/
 	select_thread_Round_Robin();
         printf("Random pos %d\n ", curThread); 
    	//setalarm_Round_Robin();
