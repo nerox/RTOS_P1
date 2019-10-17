@@ -75,7 +75,6 @@ void Lottery_Scheduler_aux()
 	while(process_list[curThread].status!=1){
 		deployer(pc);
 		curThread= select_random_thread();
-		usleep(100);
        		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
 	}
 	curThread= select_random_thread();

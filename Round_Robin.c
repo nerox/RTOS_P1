@@ -30,19 +30,22 @@ void Round_Robin_Execution()
 }
 
 void select_thread_Round_Robin(){
-	if (curThread+1<PROCESSES_AVAILABLE){
-		selectThread(curThread+1);
-	}
-	else {
-		selectThread(0);//Returns to the first position
-	}
+	selectThread(curThread+1);
 }
 void selectThread(int position){
-	int i;
-	for (i=position;i<PROCESSES_AVAILABLE;i++){
+	int i=position;
+	int count;
+	printf("All threads state%d\n",curThread);
+	for (count=0;count<PROCESSES_AVAILABLE;count++){
+		if(i==PROCESSES_AVAILABLE){
+			i=0;
+		}
 		if (process_list[i].status==1){
 			curThread=i;
 			break;
+		}
+		else{
+			i++;
 		}
 	}
 }
@@ -53,12 +56,12 @@ void Round_Robin_aux()
 	if (ret_val == 1) {
 	    return;
 	}
-	/*printf("All threads state%d\n",verify_pending_process());
+	printf("All threads state%d\n",verify_pending_process());
 	int i;
 	for(i=0;i<PROCESSES_AVAILABLE;i++){
 		printf(" %d, ",process_list[i].status);
 	}
-		printf(" \n");*/
+		printf(" \n");
 	if(verify_pending_process()!=1){
        		printf("All threads have been completed\n "); 
 		exit(1);

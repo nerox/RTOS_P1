@@ -53,7 +53,7 @@ create_and_fill_model (int num_process)
     gtk_list_store_append (store, &iter);
     gtk_list_store_set (store, &iter,
                         COL_PROCESS_ID, i,
-                        COL_PROGRESS, 10.53,
+                        COL_PROGRESS, 0.0,
                         COL_PROCESS_ACTIVE, "Inactive",
                         COL_PI_VALUE, 0.0,
                         -1);
