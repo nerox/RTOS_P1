@@ -1,20 +1,27 @@
 #include "Lottery.h"
+#include "interfaz.h"
+void timer_handler (int signum);
+void alarma();
 
 void Lottery_Scheduler_Execution()
 {
-	unsigned int n = work_unit_size*Work_by_Process[curThread];
-	long double result = 0;
 
-	long double ans = 4;
+    // double ans = 4;
+    // float percentage;
+    unsigned int n = work_unit_size*Work_by_Process[curThread];
+    update_progress_var.PI_value = 4.0;
+    uint terminos = update_progress_var.terminos;
+    printf("%0.3f\n",update_progress_var.PI_value );
 
-	for (unsigned int i = 1; i <= n; i++) {
-		ans += (4*pow(-1,i))/(2*i+1);
-		//printf("terminos resueltos = %u, aproximacion = %Lf en el hilo %d\n", i, ans,curThread );
-	}
-
-
-	printf("terminos = %u, aproximacion = %Lf en el hilo %d\n", n, ans,curThread );
+    for (uint i = 1; i <= n; i++) {
+      sprintf(path, "%d", curThread);
+      update_progress_var.path = path;
+      update_progress_var.status = "Active";//g_string_new (test);
+      update_progress_var.PI_value += (4*pow(-1,i))/(2*i+1);
+      update_progress_var.progress = 100*((double)i/(double)n);
+    }
 	process_list[curThread].status=2;
+    	update_progress_var.status = "Finished";//g_string_new (test);
 	while (1) {
 		//printf("holis%d\n",curThread);
 	}
@@ -26,6 +33,7 @@ int select_random_thread(){
 	int randomPos;
 	int retpos=0;
 	int i;
+    	update_progress_var.status = "Waiting";//g_string_new (test);
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
@@ -37,7 +45,7 @@ int select_random_thread(){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 			if(randomPos<=totalTicketsAvailable){
-				printf("Return pos %d\n ", i); 
+				//printf("Return pos %d\n ", i); 
 				return retpos=i;
 			}
 		}
@@ -47,7 +55,6 @@ int select_random_thread(){
 
 void Lottery_Scheduler_aux()
 {
-
 	int ret_val = sigsetjmp(process_list[curThread].env,1);
 	if (ret_val == 1) {
 	    return;
@@ -68,11 +75,12 @@ void Lottery_Scheduler_aux()
 	while(process_list[curThread].status!=1){
 		deployer(pc);
 		curThread= select_random_thread();
+		usleep(100);
        		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
 	}
 	curThread= select_random_thread();
         //printf("Random pos %d\n ", curThread); 
-   	setalarm();
+   	//setalarm();
 	siglongjmp(process_list[curThread].env,1);
 }
 void my_thread_init(){
@@ -103,13 +111,41 @@ void Lottery_Scheduler()
         address_t pc = (address_t)Lottery_Scheduler_Execution;
 	while(1){
 		deployer(pc);
+
 		curThread=select_random_thread();
 		if(process_list[curThread].status==1){		
-			my_thread_init();
+			//my_thread_init();
+			alarma();
 			siglongjmp(process_list[curThread].env,1);
 		}
+
 	}
 
+}
+
+void timer_handler (int signum)
+{
+ static int count = 0;
+ printf ("timer expired %d times\n", ++count);
+}
+void alarma(){
+ struct sigaction sa;
+ struct itimerval timer;
+
+ /* Install timer_handler as the signal handler for SIGVTALRM. */
+ memset (&sa, 0, sizeof (sa));
+ sa.sa_handler = &Lottery_Scheduler_aux;
+ sigaction (SIGVTALRM, &sa, NULL);
+
+ /* Configure the timer to expire after 250 msec... */
+ timer.it_value.tv_sec = 0;
+ timer.it_value.tv_usec = Quantum;
+ /* ... and every 250 msec after that. */
+ timer.it_interval.tv_sec = 0;
+ timer.it_interval.tv_usec = Quantum;
+ /* Start a virtual timer. It counts down whenever this process is
+   executing. */
+ setitimer (ITIMER_VIRTUAL, &timer, NULL);
 }
 
 

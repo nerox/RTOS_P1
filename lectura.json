@@ -1,10 +1,10 @@
 {
-  "algoritmo": "FCFS",
+  "algoritmo": "LS",
   "operacion": "Expropiativo",
   "num_procesos": "5",
   "quantum": "100000",
-  "tiempo_llegada": ["10","20","5","15","30"],
-  "cantidad_trabajo":["50","50","50","50","50"],
-  "tiquetes":["1","25","15","100","20"]
+  "tiempo_llegada": ["0","0","0","0","0"],
+  "cantidad_trabajo":["500000","500000","500000","500000","500000"],
+  "tiquetes":["10","25","15","10","20"]
 
 }

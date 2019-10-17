@@ -1,29 +1,6 @@
-
-#include <gtk/gtk.h>
-#include <math.h>
-#include <unistd.h>
-
-
-enum
-{
-  COL_PROCESS_ID,
-  COL_PROGRESS ,
-  COL_PROCESS_ACTIVE,
-  COL_PI_VALUE,
-  NUM_COLS
-} ;
-
-struct update_progress {
-  gpointer user_data;
- double PI_value;
- float progress;
- uint terminos;
- const gchar *status;
- const gchar *path;
-
-};
-
-static gboolean update_model (gpointer user_data)
+#include "interfaz.h"
+#include "Controller.h"
+gboolean update_model (gpointer user_data)
 {
   GtkListStore *store = (GtkListStore*) user_data;
   GtkTreeIter iter;
@@ -50,7 +27,7 @@ static gboolean update_model (gpointer user_data)
 double arcsin(unsigned int terminos) {
     double ans = 4;
     float percentage;
-
+    //
     for (uint i = 1; i <= terminos; i++) {
       ans += (4*pow(-1,i))/(2*i+1);
       percentage = 100*((double)i/(double)terminos);
@@ -58,26 +35,12 @@ double arcsin(unsigned int terminos) {
     }
     return ans;
 }
-
-gpointer arcsin_thread(gpointer user_data) {
-    // double ans = 4;
-    // float percentage;
-    update_progress_var.path = "9";
-    update_progress_var.status = "Active";//g_string_new (test);
-    update_progress_var.PI_value = 4.0;
-    uint terminos = update_progress_var.terminos;
-    printf("%0.3f\n",update_progress_var.PI_value );
-
-    for (uint i = 1; i <= terminos; i++) {
-      update_progress_var.PI_value += (4*pow(-1,i))/(2*i+1);
-      update_progress_var.progress = 100*((double)i/(double)terminos);
-      printf("i = %d, porcentaje: %lf, PI = %lf\n",i, update_progress_var.progress, update_progress_var.PI_value);
-    }
-    return NULL;
+gpointer scheduler_thread(gpointer user_data) {
+	Start_Scheduler();
 }
 
 
-static GtkTreeModel *
+GtkTreeModel *
 create_and_fill_model (int num_process)
 {
   GtkListStore  *store;
@@ -101,7 +64,7 @@ create_and_fill_model (int num_process)
   return GTK_TREE_MODEL (store);
 }
 
-static GtkWidget *
+GtkWidget *
 create_view_and_model (int num_process)
 {
   GtkCellRenderer     *renderer;

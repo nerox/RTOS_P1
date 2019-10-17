@@ -1,16 +1,11 @@
-
-#include <gtk/gtk.h>
-#include <math.h>
-#include <unistd.h>
 #include "interfaz.h"
-
-
-struct update_progress update_progress_var;
+#include "Controller.h"
 
 
 int
 main (int argc, char **argv)
 {
+  start_Structures();
   GtkWidget *window;
   GtkWidget *view;
   GtkWidget *scrolled_window;
@@ -23,7 +18,7 @@ main (int argc, char **argv)
   GtkWidget *halign;
   GtkWidget *valign;
 
-  int num_process = 50;
+  int num_process = PROCESSES_AVAILABLE;
 
   gtk_init (&argc, &argv);
 
@@ -89,17 +84,12 @@ main (int argc, char **argv)
 
 //printf("%0.6f\n", update_progress_var.PI_value);
 
-unsigned int n = 100;
-update_progress_var.terminos = 1000000000;
-float result = 0;
 
-
-  result = arcsin(n);
-
-  printf("terminos = %u, aproximacion = %lf\n", n, result );
   //update_progress_var.PI_value = result;
-  g_thread_new ("thread", (GThreadFunc) arcsin_thread, NULL);
-  g_timeout_add (1, update_model, ListModel);
+  g_timeout_add (100, update_model, ListModel);
+ // g_thread_new ("thread", (GThreadFunc) arcsin_thread, (gpointer)window);
+  g_thread_new ("scheduler", (GThreadFunc) scheduler_thread, (gpointer)window);
+
 
   gtk_main ();
 

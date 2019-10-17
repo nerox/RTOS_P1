@@ -16,6 +16,7 @@ typedef struct{
    char stack[STACK_SIZE];
 
 }my_pthreadpcb;
+char path[10];
 int algorithm;
 my_pthreadpcb *process_list;
 int PROCESSES_AVAILABLE;
@@ -36,7 +37,7 @@ The previous definitions need to be configured by process so that each process h
 The previous need to be defined by text file
 The prvious need to be set dinamically to N process
 */
-
+void Start_Scheduler();
 void FCFS_Scheduler_Execution();
 void FCFS_Scheduler_Selection();
 void FCFS_Scheduler_aux();
@@ -45,7 +46,7 @@ void SJF_Scheduler_Execution();
 void SJF_Scheduler_Selection();
 void SJF_Scheduler_aux();
 void SJF_Scheduler();
-long double Calculate_Pi();
+void Calculate_Pi();
 void sort(int array[], int *sortedarray,int size);
 void start_Structures();
 int verify_pending_process();
