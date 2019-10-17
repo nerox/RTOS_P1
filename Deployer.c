@@ -1,5 +1,6 @@
 #include "Deployer.h"
 #include "Controller.h"
+#include "interfaz.h"
 void start_clock(){
 	time(&start_t);
 }
@@ -18,6 +19,9 @@ void deploy_verifier(double time_spent,address_t func){
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		if(time_spent>=Arrival_Time_by_Process[i] && process_list[i].status==0){
 			printf("Adding a new process to the available list\n");
+			sprintf(path, "%d", i);
+			update_progress_var.path = path;
+			update_progress_var.status = "Created";//g_string_new (test);
 			process_list[i].status=1;
 
 			setup(i, func);

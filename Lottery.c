@@ -46,7 +46,7 @@ int select_random_thread(){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 			if(randomPos<=totalTicketsAvailable){
-				printf("Return pos %d\n ", i); 
+				//printf("Return pos %d\n ", i); 
 				return retpos=i;
 			}
 		}

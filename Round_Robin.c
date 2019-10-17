@@ -35,7 +35,7 @@ void select_thread_Round_Robin(){
 void selectThread(int position){
 	int i=position;
 	int count;
-	printf("All threads state%d\n",curThread);
+	//printf("All threads state%d\n",curThread);
 	for (count=0;count<PROCESSES_AVAILABLE;count++){
 		if(i==PROCESSES_AVAILABLE){
 			i=0;
@@ -56,12 +56,12 @@ void Round_Robin_aux()
 	if (ret_val == 1) {
 	    return;
 	}
-	printf("All threads state%d\n",verify_pending_process());
-	int i;
+	//printf("All threads state%d\n",verify_pending_process());
+	/*int i;
 	for(i=0;i<PROCESSES_AVAILABLE;i++){
 		printf(" %d, ",process_list[i].status);
 	}
-		printf(" \n");
+		printf(" \n");*/
 	if(verify_pending_process()!=1){
        		printf("All threads have been completed\n "); 
 		exit(1);
@@ -75,7 +75,7 @@ void Round_Robin_aux()
        		//printf("A new thread was added and the current thread is %d\n ",curThread); 		
 	}*/
 	select_thread_Round_Robin();
-        printf("Random pos %d\n ", curThread); 
+        //printf("Random pos %d\n ", curThread); 
    	//setalarm_Round_Robin();
 	siglongjmp(process_list[curThread].env,1);
 }
