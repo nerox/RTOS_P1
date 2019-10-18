@@ -29,50 +29,56 @@ void parse_Data_From_File(){
 	Arrival_Time_by_Process = malloc(PROCESSES_AVAILABLE * sizeof(int));
 
 	opera = json_object_get_string(operacion);
-	if(strcmp(algo, "LS")==0){
-		algorithm=0;
-		size_t n_tiquetes;
-		json_object_object_get_ex(parsed_json, "quantum", &quantum_json);
-		json_object_object_get_ex(parsed_json, "tiquetes", &tiquetes);
-		n_tiquetes = json_object_array_length(tiquetes);
-		Quantum = json_object_get_int(quantum_json);
-		Tickets_by_Process = malloc(PROCESSES_AVAILABLE * sizeof(int));
+	if(PROCESSES_AVAILABLE >= 5 && PROCESSES_AVAILABLE <=50){
+		if(strcmp(algo, "LS")==0){
+			algorithm=0;
+			size_t n_tiquetes;
+			json_object_object_get_ex(parsed_json, "quantum", &quantum_json);
+			json_object_object_get_ex(parsed_json, "tiquetes", &tiquetes);
+			n_tiquetes = json_object_array_length(tiquetes);
+			Quantum = json_object_get_int(quantum_json);
+			Tickets_by_Process = malloc(PROCESSES_AVAILABLE * sizeof(int));
 
-		for(i=0;i<PROCESSES_AVAILABLE;i++){
-			t_ll = json_object_array_get_idx(tiempo_llegada,i);
-			can_tr = json_object_array_get_idx(cantidad_trabajo,i);
-			tiq = json_object_array_get_idx(tiquetes,i);
-			Tickets_by_Process[i] = json_object_get_int(tiq);
-			Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
-			Work_by_Process[i] = json_object_get_int(can_tr);
+			for(i=0;i<PROCESSES_AVAILABLE;i++){
+				t_ll = json_object_array_get_idx(tiempo_llegada,i);
+				can_tr = json_object_array_get_idx(cantidad_trabajo,i);
+				tiq = json_object_array_get_idx(tiquetes,i);
+				Tickets_by_Process[i] = json_object_get_int(tiq);
+				Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
+				Work_by_Process[i] = json_object_get_int(can_tr);
+			}
+
+
 		}
+		else if(strcmp(algo, "FCFS")==0){
+			algorithm=1;
+			for(i=0;i<PROCESSES_AVAILABLE;i++){
+				t_ll = json_object_array_get_idx(tiempo_llegada,i);
+				can_tr = json_object_array_get_idx(cantidad_trabajo,i);
+				//tiq = json_object_array_get_idx(tiquetes,i);
+				//tiquetes_array[i] = json_object_get_int(tiq);
+				Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
+				Work_by_Process[i] = json_object_get_int(can_tr);
+			}
 
+		}
+		else if (strcmp(algo, "RR")==0){
 
+			algorithm=2;
+			json_object_object_get_ex(parsed_json, "quantum", &quantum_json);
+			Quantum = json_object_get_int(quantum_json);
+
+			for(i=0;i<PROCESSES_AVAILABLE;i++){
+				t_ll = json_object_array_get_idx(tiempo_llegada,i);
+				can_tr = json_object_array_get_idx(cantidad_trabajo,i);
+				Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
+				Work_by_Process[i] = json_object_get_int(can_tr);
+			}
+		}
 	}
-	else if(strcmp(algo, "FCFS")==0){
-		algorithm=1;
-		for(i=0;i<PROCESSES_AVAILABLE;i++){
-			t_ll = json_object_array_get_idx(tiempo_llegada,i);
-			can_tr = json_object_array_get_idx(cantidad_trabajo,i);
-			//tiq = json_object_array_get_idx(tiquetes,i);
-			//tiquetes_array[i] = json_object_get_int(tiq);
-			Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
-			Work_by_Process[i] = json_object_get_int(can_tr);
-		}
-
-	}
-	else if (strcmp(algo, "RR")==0){
-
-		algorithm=2;
-		json_object_object_get_ex(parsed_json, "quantum", &quantum_json);
-		Quantum = json_object_get_int(quantum_json);
-
-		for(i=0;i<PROCESSES_AVAILABLE;i++){
-			t_ll = json_object_array_get_idx(tiempo_llegada,i);
-			can_tr = json_object_array_get_idx(cantidad_trabajo,i);
-			Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
-			Work_by_Process[i] = json_object_get_int(can_tr);
-		}
+	else{
+		printf("%s\n","Cantidad de procesos ingresados es incorrecta favor de ingresar un valor entre 5 o 50 inclusive" );
+		exit(1);
 	}
   //"quantum": "1111",
   //"tiquetes":["5","25","20","15","10"]
