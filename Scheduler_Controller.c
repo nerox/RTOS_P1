@@ -26,12 +26,12 @@ void start_Structures(){
 	sorted_Arrival_Time_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
        	process_list = malloc(PROCESSES_AVAILABLE * sizeof(my_pthreadpcb));
 	progress_by_process= malloc(PROCESSES_AVAILABLE * sizeof(int));
-       	calculated_pi_process = malloc(PROCESSES_AVAILABLE * sizeof(float));
+       	calculated_pi_process = malloc(PROCESSES_AVAILABLE * sizeof(double));
 	int i;
 	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		process_list[i].status=0;
 		progress_by_process[i]=0;
-		calculated_pi_process[i]=4.0;
+		calculated_pi_process[i]=0.0;
 	}
 	if (Quantum<10000){
 		printf("Invalid Quantum Value, please select something higher\n");
@@ -116,8 +116,8 @@ void FCFS_Scheduler_Selection()
 void Calculate_Pi(unsigned int n) {
 
 	process_list[curThread].status=3;
-	float ans=4;
-	for (uint i = 1; i <= n; i++) {
+	double ans=0;
+	for (uint i = 0; i <= n; i++) {
 		ans+=(4*pow(-1,i))/(2*i+1);
 		calculated_pi_process[curThread]= ans;
 		progress_by_process[curThread]= 100*((double)i/(double)n);

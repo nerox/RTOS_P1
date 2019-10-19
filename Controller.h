@@ -27,7 +27,7 @@ int *Tickets_by_Process;
 int *sorted_Work_by_Process;
 int *sorted_Arrival_Time_by_Process;
 int *progress_by_process;
-float *calculated_pi_process;
+double *calculated_pi_process;
 int availableTreads;
 int curThread;
 int curSortedPos;

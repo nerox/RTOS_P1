@@ -6,8 +6,8 @@ void alarma_RR();
 void Round_Robin_Execution()
 {
     unsigned int n = work_unit_size*Work_by_Process[curThread];
-    float ans=4;
-    for (uint i = 1; i <= n; i++) {
+    double ans=0.0;
+    for (uint i = 0; i <= n; i++) {
 	ans+=(4*pow(-1,i))/(2*i+1);
 	calculated_pi_process[curThread]= ans;
 	progress_by_process[curThread]= 100*((double)i/(double)n);
