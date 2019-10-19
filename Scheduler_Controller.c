@@ -6,6 +6,8 @@
 #include "Round_Robin.h"
 #include "Quick_Sort.h"
 #include "interfaz.h"
+
+
 int verify_pending_process(){
 	int i;
 	for(i=0;i<PROCESSES_AVAILABLE;i++){
@@ -20,29 +22,20 @@ void start_Structures(){
 	parse_Data_From_File();
 	availableTreads=0;
 	priorityqueue_pos=0;
-	/*//printf("Arrival %d\n",Arrival_Time_by_Process[0]);
-	//printf("Work %d\n",Work_by_Process[0]);
-	/printf("Tiquets %d\n",Tickets_by_Process[0]);
-	printf("Arrival %d\n",Arrival_Time_by_Process[1]);
-	printf("Work %d\n",Work_by_Process[1]);
-	//printf("Tiquets %d\n",Tickets_by_Process[1]);
-	printf("Arrival %d\n",Arrival_Time_by_Process[2]);
-	printf("Work %d\n",Work_by_Process[2]);
-	//printf("Tiquets %d\n",Tickets_by_Process[2]);
-	printf("Arrival %d\n",Arrival_Time_by_Process[3]);
-	printf("Work %d\n",Work_by_Process[3]);
-	//printf("Tiquets %d\n",Tickets_by_Process[3]);
-	printf("Arrival %d\n",Arrival_Time_by_Process[4]);
-	printf("Work %d\n",Work_by_Process[4]);
-	//printf("Tiquets %d\n",Tickets_by_Process[4]);
-	printf("Process %d\n",PROCESSES_AVAILABLE);
-	printf("Qunatum %d\n",Quantum);*/
 	sorted_Work_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
 	sorted_Arrival_Time_by_Process= malloc(PROCESSES_AVAILABLE * sizeof(int));
        	process_list = malloc(PROCESSES_AVAILABLE * sizeof(my_pthreadpcb));
+	progress_by_process= malloc(PROCESSES_AVAILABLE * sizeof(int));
+       	calculated_pi_process = malloc(PROCESSES_AVAILABLE * sizeof(float));
 	int i;
-	for (i=0;i++;i<PROCESSES_AVAILABLE){
+	for (i=0;i<PROCESSES_AVAILABLE;i++){
 		process_list[i].status=0;
+		progress_by_process[i]=0;
+		calculated_pi_process[i]=4.0;
+	}
+	if (Quantum<10000){
+		printf("Invalid Quantum Value, please select something higher\n");
+		exit(0);
 	}
 }
 void Start_Scheduler()
@@ -84,6 +77,10 @@ void FCFS_Scheduler(){
 		else{
 		}
 	}
+	while(1){
+		printf("All threads have been completed\n "); 
+		usleep(1000000);
+	}
 }
 void FCFS_Scheduler_aux(){
 
@@ -117,21 +114,15 @@ void FCFS_Scheduler_Selection()
 
 
 void Calculate_Pi(unsigned int n) {
-    // double ans = 4;
-    // float percentage;
-    update_progress_var.PI_value = 4.0;
-    uint terminos = update_progress_var.terminos;
-    printf("%0.3f\n",update_progress_var.PI_value );
 
-    for (uint i = 1; i <= n; i++) {
-      sprintf(path, "%d", curThread);
-      update_progress_var.path = path;
-      update_progress_var.status = "Active";//g_string_new (test);
-      update_progress_var.PI_value += (4*pow(-1,i))/(2*i+1);
-      update_progress_var.progress = 100*((double)i/(double)n);
-    }
+	process_list[curThread].status=3;
+	float ans=4;
+	for (uint i = 1; i <= n; i++) {
+		ans+=(4*pow(-1,i))/(2*i+1);
+		calculated_pi_process[curThread]= ans;
+		progress_by_process[curThread]= 100*((double)i/(double)n);
+	}
 	process_list[curThread].status=2;
-    	update_progress_var.status = "Finished";//g_string_new (test);
 
 }
 

@@ -5,27 +5,18 @@ void alarma_RR();
 
 void Round_Robin_Execution()
 {
-    // double ans = 4;
-    // float percentage;
     unsigned int n = work_unit_size*Work_by_Process[curThread];
-    update_progress_var.PI_value = 4.0;
-    uint terminos = update_progress_var.terminos;
-    printf("%0.3f\n",update_progress_var.PI_value );
-
+    float ans=4;
     for (uint i = 1; i <= n; i++) {
-      sprintf(path, "%d", curThread);
-      update_progress_var.path = path;
-      update_progress_var.status = "Active";//g_string_new (test);
-      update_progress_var.PI_value += (4*pow(-1,i))/(2*i+1);
-      update_progress_var.progress = 100*((double)i/(double)n);
+	ans+=(4*pow(-1,i))/(2*i+1);
+	calculated_pi_process[curThread]= ans;
+	progress_by_process[curThread]= 100*((double)i/(double)n);
     }
 	process_list[curThread].status=2;
-    	update_progress_var.status = "Finished";//g_string_new (test);
+	Round_Robin_aux();
 	while (1) {
-		//printf("holis%d\n",curThread);
+
 	}
-
-
 	
 }
 
@@ -51,7 +42,9 @@ void selectThread(int position){
 }
 void Round_Robin_aux()
 {
-
+	if(process_list[curThread].status!=2){
+		process_list[curThread].status=1;
+	}
 	int ret_val = sigsetjmp(process_list[curThread].env,1);
 	if (ret_val == 1) {
 	    return;
@@ -64,7 +57,7 @@ void Round_Robin_aux()
 		printf(" \n");*/
 	if(verify_pending_process()!=1){
        		printf("All threads have been completed\n "); 
-		exit(1);
+		usleep(1000000);
 	}
 	// TODO: we will handle scheduling threads here.
         address_t pc = (address_t)Round_Robin_Execution;
@@ -77,6 +70,9 @@ void Round_Robin_aux()
 	select_thread_Round_Robin();
         //printf("Random pos %d\n ", curThread); 
    	//setalarm_Round_Robin();
+	if(process_list[curThread].status!=2){
+		process_list[curThread].status=3;
+	}
 	siglongjmp(process_list[curThread].env,1);
 }
 void my_thread_init_Round_Robin(){
@@ -131,6 +127,7 @@ void alarma_RR(){
  sa.sa_handler = &Round_Robin_aux;
  sigaction (SIGVTALRM, &sa, NULL);
 
+ if(Quantum<999999){
  /* Configure the timer to expire after 250 msec... */
  timer.it_value.tv_sec = 0;
  timer.it_value.tv_usec = Quantum;
@@ -139,6 +136,17 @@ void alarma_RR(){
  timer.it_interval.tv_usec = Quantum;
  /* Start a virtual timer. It counts down whenever this process is
    executing. */
+}
+else{
+ /* Configure the timer to expire after 250 msec... */
+ timer.it_value.tv_sec = Quantum/1000000;
+ timer.it_value.tv_usec = 0;
+ /* ... and every 250 msec after that. */
+ timer.it_interval.tv_sec = Quantum/1000000;
+ timer.it_interval.tv_usec = 0;
+ /* Start a virtual timer. It counts down whenever this process is
+   executing. */
+}
  setitimer (ITIMER_VIRTUAL, &timer, NULL);
 }
 

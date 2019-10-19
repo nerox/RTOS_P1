@@ -4,7 +4,9 @@
 
 
 /* A translation is required when using an address of a variable.
-   Use this as a black box in your code. */
+   Use this as a black box in your code.
+  THis assembly code is supported by https://gist.github.com/elliott-beach/c52300a30db2c6dc744a5c9e5e107b22
+ */
 address_t translate_address(address_t addr)
 {
 	address_t ret;
