@@ -29,7 +29,7 @@ void parse_Data_From_File(){
 	Arrival_Time_by_Process = malloc(PROCESSES_AVAILABLE * sizeof(int));
 
 	opera = json_object_get_string(operacion);
-	if(PROCESSES_AVAILABLE >= 5 && PROCESSES_AVAILABLE <=50){
+	if(PROCESSES_AVAILABLE >= 5 && PROCESSES_AVAILABLE <=25){
 		if(strcmp(algo, "LS")==0){
 			algorithm=0;
 			size_t n_tiquetes;
@@ -55,8 +55,6 @@ void parse_Data_From_File(){
 			for(i=0;i<PROCESSES_AVAILABLE;i++){
 				t_ll = json_object_array_get_idx(tiempo_llegada,i);
 				can_tr = json_object_array_get_idx(cantidad_trabajo,i);
-				//tiq = json_object_array_get_idx(tiquetes,i);
-				//tiquetes_array[i] = json_object_get_int(tiq);
 				Arrival_Time_by_Process[i] = json_object_get_int(t_ll);
 				Work_by_Process[i] = json_object_get_int(can_tr);
 			}
@@ -80,16 +78,4 @@ void parse_Data_From_File(){
 		printf("%s\n","Cantidad de procesos ingresados es incorrecta favor de ingresar un valor entre 5 o 50 inclusive" );
 		exit(1);
 	}
-  //"quantum": "1111",
-  //"tiquetes":["5","25","20","15","10"]
-  //printf("Algoritmo a utilizar: %s\n", json_object_get_string(algoritmo));
-  //printf("Operacion: %s\n", json_object_get_string(operacion));
-  //printf("Numero de Procesos: %d\n", json_object_get_int(num_procesos));
-
-  //for(j=0;j<json_object_get_int(num_procesos);j++){
-    //printf("Element[%d] = %d\n",j,tiempo_array[j] );
-  //}
-  //for(j=0;j<json_object_get_int(num_procesos);j++){
-    //printf("Element[%d] = %d\n",j,trabajo_array[j] );
-  //}
 }

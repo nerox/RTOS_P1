@@ -7,11 +7,12 @@ void Lottery_Scheduler_Execution()
 {
 
     unsigned int n = work_unit_size*Work_by_Process[curThread];
-    float ans=4;
-    for (uint i = 1; i <= n; i++) {
-	ans+=(4*pow(-1,i))/(2*i+1);
-	calculated_pi_process[curThread]= ans;
-	progress_by_process[curThread]= 100*((double)i/(double)n);
+    double ans = 0.0;
+    for (uint i = 0; i <= n; i++) {
+      	ans += (4*pow(-1,i))/(2*i+1);
+        //printf("%0.6f\n",ans );
+      	calculated_pi_process[curThread]= ans;
+      	progress_by_process[curThread]= 100*((double)i/(double)n);
     }
 	process_list[curThread].status=2;
 	Lottery_Scheduler_aux();
@@ -19,7 +20,7 @@ void Lottery_Scheduler_Execution()
 
 	}
 
-	
+
 }
 int select_random_thread(){
 	int totalTicketsAvailable=0;
@@ -37,7 +38,7 @@ int select_random_thread(){
 		if(process_list[i].status==1){
 			totalTicketsAvailable+=Tickets_by_Process[i];
 			if(randomPos<=totalTicketsAvailable){
-				//printf("Return pos %d\n ", i); 
+				//printf("Return pos %d\n ", i);
 				return retpos=i;
 			}
 		}
@@ -54,27 +55,16 @@ void Lottery_Scheduler_aux()
 	if (ret_val == 1) {
 	    return;
 	}
-	/*printf("All threads state%d\n",verify_pending_process());
-	int i;
-	for(i=0;i<PROCESSES_AVAILABLE;i++){
-		printf(" %d, ",process_list[i].status);
-	}
-		printf(" \n");*/
 	if(verify_pending_process()!=1){
-       		printf("All threads have been completed\n "); 
+       		printf("All threads have been completed\n ");
 		usleep(1000000);
-		//exit(1);
 	}
 	// TODO: we will handle scheduling threads here.
         address_t pc = (address_t)Lottery_Scheduler_Execution;
-	deployer(pc);		
-	/*while(process_list[curThread].status!=1){
-		deployer(pc);
-		curThread= select_random_thread();
-       		printf("A new thread was added and the current thread is %d\n ",curThread); 		
-	}*/
+	deployer(pc);
+
 	curThread= select_random_thread();
-        //printf("Random pos %d\n ", curThread); 
+        //printf("Random pos %d\n ", curThread);
    	//setalarm();
 	if(process_list[curThread].status!=2){
 		process_list[curThread].status=3;
@@ -83,7 +73,7 @@ void Lottery_Scheduler_aux()
 }
 void my_thread_init(){
 
-  
+
 	tout_val.it_interval.tv_sec = 0;
 	tout_val.it_interval.tv_usec = 0;
 	tout_val.it_value.tv_sec = 0; /* set timer for "INTERVAL (10) seconds */
@@ -110,7 +100,7 @@ void Lottery_Scheduler()
 	while(1){
 		deployer(pc);
 		curThread=select_random_thread();
-		if(process_list[curThread].status==1){		
+		if(process_list[curThread].status==1){
 			//my_thread_init();
 			alarma();
 			siglongjmp(process_list[curThread].env,1);
@@ -155,5 +145,3 @@ else{
 }
  setitimer (ITIMER_VIRTUAL, &timer, NULL);
 }
-
-

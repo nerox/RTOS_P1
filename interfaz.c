@@ -1,8 +1,10 @@
 #include "interfaz.h"
 #include "Controller.h"
+
+
 gboolean update_model (gpointer user_data)
 {
-  	GtkListStore *store = (GtkListStore*) user_data;
+  GtkListStore *store = (GtkListStore*) user_data;
 	GtkTreeIter iter;
 	GtkTreePath *path_gtk;
 	int index;
@@ -29,7 +31,7 @@ gboolean update_model (gpointer user_data)
 			break;
 
 		}
-		
+
 	path_gtk = gtk_tree_path_new_from_string (update_progress_var.path);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL (user_data),
 		                &iter,
@@ -53,8 +55,7 @@ gpointer scheduler_thread(gpointer user_data) {
 }
 
 
-GtkTreeModel *
-create_and_fill_model (int num_process)
+GtkTreeModel *create_and_fill_model (int num_process)
 {
   GtkListStore  *store;
   GtkTreeIter    iter;
@@ -77,8 +78,7 @@ create_and_fill_model (int num_process)
   return GTK_TREE_MODEL (store);
 }
 
-GtkWidget *
-create_view_and_model (int num_process)
+GtkWidget *create_view_and_model (int num_process)
 {
   GtkCellRenderer     *renderer;
   GtkTreeModel        *model;
@@ -134,12 +134,9 @@ void setup_interfaz (int num_process)
 {
   GtkWidget *view;
   GtkWidget *scrolled_window;
-
- //  GtkWidget *okBtn;
- // GtkWidget *clsBtn;
-
+  GtkWidget *exit_bottom;
   GtkWidget *vbox;
-  // GtkWidget *hbox;
+  GtkWidget *hbox;
 
     update_progress_var.window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (update_progress_var.window), "Project1 RTOS: The Scheduler");
@@ -161,17 +158,14 @@ void setup_interfaz (int num_process)
 
   gtk_container_add(GTK_CONTAINER(update_progress_var.window), vbox);
 
-  // hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
-
-
-
-  // clsBtn = gtk_button_new_with_label("Exit");
-  // g_signal_connect_swapped (clsBtn, "clicked", G_CALLBACK (gtk_widget_destroy), update_progress_var.window);
-  // gtk_container_add(GTK_CONTAINER(hbox), clsBtn);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 3);
+  exit_bottom = gtk_button_new_with_label("Exit");
+  g_signal_connect_swapped (exit_bottom, "clicked", G_CALLBACK (gtk_widget_destroy), update_progress_var.window);
+  gtk_container_add(GTK_CONTAINER(hbox), exit_bottom);
 
 
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, FALSE, FALSE, 0);
-  // gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
   g_signal_connect(G_OBJECT(update_progress_var.window), "destroy",G_CALLBACK(gtk_main_quit), G_OBJECT(update_progress_var.window));
 
